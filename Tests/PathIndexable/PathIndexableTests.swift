@@ -43,7 +43,7 @@ extension Node: PathIndexable {
 }
 
 
-class PathIndexTests: XCTestCase {
+class PathIndexableTests: XCTestCase {
     static var allTests: [(String, (PathIndexTests) -> () throws -> Void)] {
         return [
                    ("testInt", testInt),
