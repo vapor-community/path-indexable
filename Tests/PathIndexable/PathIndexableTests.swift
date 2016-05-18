@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import PathIndex
+@testable import PathIndexable
 
 public enum Node {
     case null
