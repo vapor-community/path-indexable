@@ -1,13 +1,14 @@
-////
-////  Genome
-////
-////  Created by Logan Wright
-////  Copyright © 2016 lowriDevs. All rights reserved.
-////
-////  MIT
-////
 //
+//  Genome
 //
+//  Created by Logan Wright
+//  Copyright © 2016 lowriDevs. All rights reserved.
+//
+//  MIT
+//
+
+extension Node: StructureProtocol {}
+
 // MARK: Subscripts
 
 extension StructureProtocol {

@@ -3,8 +3,8 @@ public protocol StructureProtocol {
     var array: [Self]? { get }
     var object: [String: Self]? { get }
 
-    init(arrayStructure: [Self])
-    init(objectStructure: [String: Self])
+    init(_ array: [Self])
+    init(_ object: [String: Self])
 }
 
 //extension Node: StructureProtocol {
@@ -82,11 +82,11 @@ extension Int: NodeIndexable {
         } else {
             mutable.remove(at: self)
         }
-        parent = parent.dynamicType.init(arrayStructure: mutable)
+        parent = parent.dynamicType.init(mutable)
     }
 
     public func makeEmptyStructure<T: StructureProtocol>() -> T {
-        return T(arrayStructure: [])
+        return T([])
     }
 }
 
@@ -100,7 +100,7 @@ extension String: NodeIndexable {
         } else if let array = node.array {
             let value = array.flatMap(self.access)
             if value.count == array.count {
-                return node.dynamicType.init(arrayStructure: value)
+                return node.dynamicType.init(value)
             } else {
                 return nil
             }
@@ -116,19 +116,19 @@ extension String: NodeIndexable {
         if let object = parent.object {
             var mutable = object
             mutable[self] = input
-            parent = parent.dynamicType.init(objectStructure: mutable)
+            parent = parent.dynamicType.init(mutable)
         } else if let array = parent.array {
             let mapped: [T] = array.map { val in
                 var mutable = val
                 self.set(input, to: &mutable)
                 return mutable
             }
-            parent = parent.dynamicType.init(arrayStructure: mapped)
+            parent = parent.dynamicType.init(mapped)
         }
     }
 
 
     public func makeEmptyStructure<T: StructureProtocol>() -> T {
-        return T(objectStructure: [:])
+        return T([:])
     }
 }
