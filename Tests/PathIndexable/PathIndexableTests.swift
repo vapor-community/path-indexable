@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import NodeIndexable
+@testable import PathIndex
 
 public enum Node {
     case null
@@ -18,7 +18,7 @@ public enum Node {
     case object([String:Node])
 }
 
-extension Node: StructureProtocol {
+extension Node: PathIndexable {
     public var array: [Node]? {
         guard case let .array(arr) = self else {
             return nil
@@ -43,8 +43,8 @@ extension Node: StructureProtocol {
 }
 
 
-class NodeIndexableTests: XCTestCase {
-    static var allTests: [(String, (NodeIndexableTests) -> () throws -> Void)] {
+class PathIndexTests: XCTestCase {
+    static var allTests: [(String, (PathIndexTests) -> () throws -> Void)] {
         return [
                    ("testInt", testInt),
                    ("testString", testString),

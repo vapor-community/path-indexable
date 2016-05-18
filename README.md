@@ -1,13 +1,13 @@
-<h1 align="center">NodeIndexable</h1>
+<h1 align="center">PathIndexable</h1>
 
 The purpose of this package is to allow complex key path logic to be applied to multiple types of data structures.
 
-### StructureProtocol
+### PathIndexable
 
 This type is used to define a structure that can inherit complex subscripting.
 
 ```Swift
-public protocol StructureProtocol {
+public protocol PathIndexable {
     /// If self is an array representation, return array
     var array: [Self]? { get }
 

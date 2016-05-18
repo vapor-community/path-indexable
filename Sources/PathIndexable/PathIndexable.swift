@@ -3,7 +3,7 @@
  Objects wishing to inherit complex subscripting should implement
  this protocol
  */
-public protocol StructureProtocol {
+public protocol PathIndexable {
     /// If self is an array representation, return array
     var array: [Self]? { get }
 
@@ -33,7 +33,7 @@ public protocol StructureProtocol {
  Int and String are supported natively, additional Indexable types
  should only be added after very careful consideration.
  */
-public protocol NodeIndexable {
+public protocol PathIndex {
     /**
      Acess for 'self' within the given node, 
      ie: inverse ov `= node[self]`
@@ -42,7 +42,7 @@ public protocol NodeIndexable {
 
      - returns: a value for index of 'self' if exists
      */
-    func access<T: StructureProtocol>(in node: T) -> T?
+    func access<T: PathIndexable>(in node: T) -> T?
 
     /**
      Set given input to a given node for 'self' if possible.
@@ -51,7 +51,7 @@ public protocol NodeIndexable {
      - parameter input:  value to set in parent, or `nil` if should remove
      - parameter parent: node to set input in
      */
-    func set<T: StructureProtocol>(_ input: T?, to parent: inout T)
+    func set<T: PathIndexable>(_ input: T?, to parent: inout T)
 
     /**
      Create an empty structure that can be set with the given type.
@@ -63,22 +63,22 @@ public protocol NodeIndexable {
 
      - returns: an empty structure that can be set by Self
      */
-    func makeEmptyStructure<T: StructureProtocol>() -> T
+    func makeEmptyStructure<T: PathIndexable>() -> T
 }
 
-extension Int: NodeIndexable {
+extension Int: PathIndex {
     /**
-     - see: NodeIndexable
+     - see: PathIndex
      */
-    public func access<T: StructureProtocol>(in node: T) -> T? {
+    public func access<T: PathIndexable>(in node: T) -> T? {
         guard let array = node.array where self < array.count else { return nil }
         return array[self]
     }
 
     /**
-     - see: NodeIndexable
+     - see: PathIndex
      */
-    public func set<T: StructureProtocol>(_ input: T?, to parent: inout T) {
+    public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
         guard let array = parent.array where self < array.count else { return }
         var mutable = array
         if let new = input {
@@ -89,16 +89,16 @@ extension Int: NodeIndexable {
         parent = parent.dynamicType.init(mutable)
     }
 
-    public func makeEmptyStructure<T: StructureProtocol>() -> T {
+    public func makeEmptyStructure<T: PathIndexable>() -> T {
         return T([])
     }
 }
 
-extension String: NodeIndexable {
+extension String: PathIndex {
     /**
-     - see: NodeIndexable
+     - see: PathIndex
      */
-    public func access<T: StructureProtocol>(in node: T) -> T? {
+    public func access<T: PathIndexable>(in node: T) -> T? {
         if let object = node.object?[self] {
             return object
         } else if let array = node.array {
@@ -114,9 +114,9 @@ extension String: NodeIndexable {
     }
 
     /**
-     - see: NodeIndexable
+     - see: PathIndex
      */
-    public func set<T: StructureProtocol>(_ input: T?, to parent: inout T) {
+    public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
         if let object = parent.object {
             var mutable = object
             mutable[self] = input
@@ -132,7 +132,7 @@ extension String: NodeIndexable {
     }
 
 
-    public func makeEmptyStructure<T: StructureProtocol>() -> T {
+    public func makeEmptyStructure<T: PathIndexable>() -> T {
         return T([:])
     }
 }

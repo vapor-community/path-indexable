@@ -2,11 +2,11 @@
 #if os(Linux)
 
 import XCTest
-@testable import NodeIndexableTestSuite
+@testable import PathIndexableTestSuite
 
 XCTMain([
     testCase(DictionaryKeyPathTests.allTests),
-    testCase(NodeIndexableTests.allTests),
+    testCase(PathIndexableTests.allTests),
 ])
 
 #endif

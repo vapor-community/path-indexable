@@ -9,8 +9,8 @@
 
 // MARK: Subscripts
 
-extension StructureProtocol {
-    public subscript(indexes: NodeIndexable...) -> Self? {
+extension PathIndexable {
+    public subscript(indexes: PathIndex...) -> Self? {
         get {
             return self[indexes]
         }
@@ -19,7 +19,7 @@ extension StructureProtocol {
         }
     }
 
-    public subscript(indexes: [NodeIndexable]) -> Self? {
+    public subscript(indexes: [PathIndex]) -> Self? {
         get {
             let first: Optional<Self> = self
             return indexes.reduce(first) { next, index in
@@ -43,7 +43,7 @@ extension StructureProtocol {
     }
 }
 
-extension StructureProtocol {
+extension PathIndexable {
     public subscript(indexes: Int...) -> Self? {
         get {
             return self[indexes]
@@ -55,17 +55,17 @@ extension StructureProtocol {
 
     public subscript(indexes: [Int]) -> Self? {
         get {
-            let indexable = indexes.map { $0 as NodeIndexable }
+            let indexable = indexes.map { $0 as PathIndex }
             return self[indexable]
         }
         set {
-            let indexable = indexes.map { $0 as NodeIndexable }
+            let indexable = indexes.map { $0 as PathIndex }
             self[indexable] = newValue
         }
     }
 }
 
-extension StructureProtocol {
+extension PathIndexable {
     public subscript(path path: String) -> Self? {
         get {
             let comps = path.characters.split(separator: ".").map(String.init)
@@ -92,11 +92,11 @@ extension StructureProtocol {
 
     public subscript(indexes: [String]) -> Self? {
         get {
-            let indexable = indexes.map { $0 as NodeIndexable }
+            let indexable = indexes.map { $0 as PathIndex }
             return self[indexable]
         }
         set {
-            let indexable = indexes.map { $0 as NodeIndexable }
+            let indexable = indexes.map { $0 as PathIndex }
             self[indexable] = newValue
         }
     }

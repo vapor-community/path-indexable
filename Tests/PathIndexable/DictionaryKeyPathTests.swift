@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import NodeIndexable
+import PathIndex
 
 class DictionaryKeyPathTests: XCTestCase {
     static var allTests: [(String, (DictionaryKeyPathTests) -> () throws -> Void)] {
