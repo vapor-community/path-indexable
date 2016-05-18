@@ -2,7 +2,7 @@
 #if os(Linux)
 
 import XCTest
-@testable import GenomeTestSuite
+@testable import NodeIndexableTestSuite
 
 XCTMain([
     testCase(DictionaryKeyPathTests.allTests),
