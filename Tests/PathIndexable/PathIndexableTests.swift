@@ -44,7 +44,7 @@ extension Node: PathIndexable {
 
 
 class PathIndexableTests: XCTestCase {
-    static var allTests: [(String, (PathIndexTests) -> () throws -> Void)] {
+    static var allTests: [(String, (PathIndexableTests) -> () throws -> Void)] {
         return [
                    ("testInt", testInt),
                    ("testString", testString),
