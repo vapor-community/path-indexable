@@ -6,8 +6,7 @@ import XCTest
 
 XCTMain([
     testCase(DictionaryKeyPathTests.allTests),
-    testCase(NodeDataTypeTest.allTests),
-    testCase(NodeIndexable.allTests),
+    testCase(NodeIndexableTests.allTests),
 ])
 
 #endif

@@ -7,8 +7,6 @@
 //  MIT
 //
 
-extension Node: StructureProtocol {}
-
 // MARK: Subscripts
 
 extension StructureProtocol {
@@ -23,7 +21,7 @@ extension StructureProtocol {
 
     public subscript(indexes: [NodeIndexable]) -> Self? {
         get {
-            let first = Optional(self)
+            let first: Optional<Self> = self
             return indexes.reduce(first) { next, index in
                 guard let next = next else { return nil }
                 return index.access(in: next)
@@ -81,7 +79,7 @@ extension StructureProtocol {
 
     public subscript(indexes: String...) -> Self? {
         get {
-            #if DISABLE_GENOME_WARNINGS
+            #if DISABLE_NODE_INDEXABLE_WARNINGS
             #else
                 warnKeypathChangeIfNecessary(indexes: indexes)
             #endif
@@ -103,13 +101,13 @@ extension StructureProtocol {
         }
     }
 
-    #if DISABLE_GENOME_WARNINGS
+    #if DISABLE_NODE_INDEXABLE_WARNINGS
     #else
     /**
      We have changed keypath access in a way that will silently affect older versions.
      I believe it's important to warn users
 
-     If we find a single parameter which contains `.` notation, then in older Genome versions, this
+     If we find a single parameter which contains `.` notation, then in other versions, this
      would have been interpreted as a keypath. If we find indexes that match that case, we should
      provide a warning
 
@@ -141,7 +139,7 @@ extension StructureProtocol {
         print("\n\t\tnode[path: \(first)]")
         print("\n")
         print("\tIf '\(first)' should be interpreted as a key, ignore this warning")
-        print("\tDisable this warning with flag: DISABLE_GENOME_WARNINGS")
+        print("\tDisable this warning with flag: DISABLE_NODE_INDEXABLE_WARNINGS")
         print("\n***************")
     }
     #endif
