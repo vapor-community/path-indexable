@@ -1,17 +1,17 @@
+////
+////  Genome
+////
+////  Created by Logan Wright
+////  Copyright © 2016 lowriDevs. All rights reserved.
+////
+////  MIT
+////
 //
-//  Genome
 //
-//  Created by Logan Wright
-//  Copyright © 2016 lowriDevs. All rights reserved.
-//
-//  MIT
-//
-
-
 // MARK: Subscripts
 
-extension Node {
-    public subscript(indexes: NodeIndexable...) -> Node? {
+extension StructureProtocol {
+    public subscript(indexes: NodeIndexable...) -> Self? {
         get {
             return self[indexes]
         }
@@ -20,11 +20,12 @@ extension Node {
         }
     }
 
-    public subscript(indexes: [NodeIndexable]) -> Node? {
+    public subscript(indexes: [NodeIndexable]) -> Self? {
         get {
             let first = Optional(self)
             return indexes.reduce(first) { next, index in
-                return next.flatMap(index.access)
+                guard let next = next else { return nil }
+                return index.access(in: next)
             }
         }
         set {
@@ -35,7 +36,7 @@ extension Node {
             if keys.isEmpty {
                 first.set(newValue, to: &self)
             } else {
-                var next = self[first] ?? first.makeIndexableNode()
+                var next = self[first] ?? first.makeEmptyStructure() as Self
                 next[keys] = newValue
                 self[first] = next
             }
@@ -43,8 +44,8 @@ extension Node {
     }
 }
 
-extension Node {
-    public subscript(indexes: Int...) -> Node? {
+extension StructureProtocol {
+    public subscript(indexes: Int...) -> Self? {
         get {
             return self[indexes]
         }
@@ -53,7 +54,7 @@ extension Node {
         }
     }
 
-    public subscript(indexes: [Int]) -> Node? {
+    public subscript(indexes: [Int]) -> Self? {
         get {
             let indexable = indexes.map { $0 as NodeIndexable }
             return self[indexable]
@@ -65,9 +66,8 @@ extension Node {
     }
 }
 
-
-extension Node {
-    public subscript(path path: String) -> Node? {
+extension StructureProtocol {
+    public subscript(path path: String) -> Self? {
         get {
             let comps = path.characters.split(separator: ".").map(String.init)
             return self[comps]
@@ -78,7 +78,7 @@ extension Node {
         }
     }
 
-    public subscript(indexes: String...) -> Node? {
+    public subscript(indexes: String...) -> Self? {
         get {
             #if DISABLE_GENOME_WARNINGS
             #else
@@ -91,7 +91,7 @@ extension Node {
         }
     }
 
-    public subscript(indexes: [String]) -> Node? {
+    public subscript(indexes: [String]) -> Self? {
         get {
             let indexable = indexes.map { $0 as NodeIndexable }
             return self[indexable]
