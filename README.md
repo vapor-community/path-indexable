@@ -43,7 +43,7 @@ let id = json["id"]
 Standard Int
 
 ```Swift
-let first = json[1]
+let second = json[1]
 ```
 
 Multiple Strings
