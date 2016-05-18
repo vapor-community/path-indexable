@@ -1,35 +1,29 @@
 
+/**
+ Objects wishing to inherit complex subscripting should implement
+ this protocol
+ */
 public protocol StructureProtocol {
+    /// If self is an array representation, return array
     var array: [Self]? { get }
+
+    /// If self is an object representation, return object
     var object: [String: Self]? { get }
 
+    /**
+     Initialize a new object encapsulating an array of Self
+
+     - parameter array: value to encapsulate
+     */
     init(_ array: [Self])
+
+    /**
+     Initialize a new object encapsulating an object of type [String: Self]
+
+     - parameter object: value to encapsulate
+     */
     init(_ object: [String: Self])
 }
-
-//extension Node: StructureProtocol {
-////    var array: [StructureProtocol]? {
-////        guard case let .array(arr) = self else {
-////            return nil
-////        }
-////        return arr
-////    }
-////
-////    var object: [String: StructureProtocol]? {
-////        guard case let .object(ob) = self else {
-////            return nil
-////        }
-////        return ob
-////    }
-//
-//    public init(arrayStructure: [StructureProtocol]) {
-//        self = .array(arrayStructure as! [Node])
-//    }
-//
-//    public init(objectStructure: [String: StructureProtocol]) {
-//        self = .object(objectStructure as! [String : Node])
-//    }
-//}
 
 // MARK: Indexable
 
@@ -59,6 +53,16 @@ public protocol NodeIndexable {
      */
     func set<T: StructureProtocol>(_ input: T?, to parent: inout T)
 
+    /**
+     Create an empty structure that can be set with the given type.
+     
+     ie: 
+     - a string will create an empty dictionary to add itself as a value
+     - an Int will create an empty array to add itself as a value
+
+
+     - returns: an empty structure that can be set by Self
+     */
     func makeEmptyStructure<T: StructureProtocol>() -> T
 }
 
