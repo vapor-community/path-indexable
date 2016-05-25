@@ -5,10 +5,10 @@
  */
 public protocol PathIndexable {
     /// If self is an array representation, return array
-    var array: [Self]? { get }
+    var pathIndexableArray: [Self]? { get }
 
     /// If self is an object representation, return object
-    var object: [String: Self]? { get }
+    var pathIndexableObject: [String: Self]? { get }
 
     /**
      Initialize a new object encapsulating an array of Self
@@ -71,7 +71,7 @@ extension Int: PathIndex {
      - see: PathIndex
      */
     public func access<T: PathIndexable>(in node: T) -> T? {
-        guard let array = node.array where self < array.count else { return nil }
+        guard let array = node.pathIndexableArray where self < array.count else { return nil }
         return array[self]
     }
 
@@ -79,7 +79,7 @@ extension Int: PathIndex {
      - see: PathIndex
      */
     public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
-        guard let array = parent.array where self < array.count else { return }
+        guard let array = parent.pathIndexableArray where self < array.count else { return }
         var mutable = array
         if let new = input {
             mutable[self] = new
@@ -99,9 +99,9 @@ extension String: PathIndex {
      - see: PathIndex
      */
     public func access<T: PathIndexable>(in node: T) -> T? {
-        if let object = node.object?[self] {
+        if let object = node.pathIndexableObject?[self] {
             return object
-        } else if let array = node.array {
+        } else if let array = node.pathIndexableArray {
             let value = array.flatMap(self.access)
             if value.count == array.count {
                 return node.dynamicType.init(value)
@@ -117,11 +117,11 @@ extension String: PathIndex {
      - see: PathIndex
      */
     public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
-        if let object = parent.object {
+        if let object = parent.pathIndexableObject {
             var mutable = object
             mutable[self] = input
             parent = parent.dynamicType.init(mutable)
-        } else if let array = parent.array {
+        } else if let array = parent.pathIndexableArray {
             let mapped: [T] = array.map { val in
                 var mutable = val
                 self.set(input, to: &mutable)
