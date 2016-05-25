@@ -19,14 +19,14 @@ public enum Node {
 }
 
 extension Node: PathIndexable {
-    public var array: [Node]? {
+    public var pathIndexableArray: [Node]? {
         guard case let .array(arr) = self else {
             return nil
         }
         return arr
     }
 
-    public var object: [String: Node]? {
+    public var pathIndexableObject: [String: Node]? {
         guard case let .object(ob) = self else {
             return nil
         }
@@ -41,7 +41,6 @@ extension Node: PathIndexable {
         self = .object(object)
     }
 }
-
 
 class PathIndexableTests: XCTestCase {
     static var allTests: [(String, (PathIndexableTests) -> () throws -> Void)] {
