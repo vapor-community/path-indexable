@@ -100,3 +100,24 @@ let json = [
 ```Swift
 let arrayOfNames = json["name"] // ["joe", "jane"]
 ```
+
+
+## 🌏 Environment
+
+|Polymorphic|Xcode|Swift|
+|:-:|:-:|:-:|
+|0.3.x|8.0 Beta **3**|DEVELOPMENT-SNAPSHOT-2016-07-20-qutheory|
+|0.2.x|7.3.x|DEVELOPMENT-SNAPSHOT-2016-05-03-a|
+|0.1.x|7.3.x|DEVELOPMENT-SNAPSHOT-2016-05-03-a|
+
+## 📖 Documentation
+
+Visit the Vapor web framework's [documentation](http://docs.qutheory.io) for instructions on how to install Swift 3. 
+
+## 💧 Community
+
+We pride ourselves on providing a diverse and welcoming community. Join your fellow Vapor developers in [our slack](slack.qutheory.io) and take part in the conversation.
+
+## 🔧 Compatibility
+
+Node has been tested on OS X 10.11, Ubuntu 14.04, and Ubuntu 15.10.

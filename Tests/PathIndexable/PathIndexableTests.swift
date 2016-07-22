@@ -9,7 +9,7 @@
 import XCTest
 @testable import PathIndexable
 
-public enum Node {
+enum Node {
     case null
     case bool(Bool)
     case number(Double)
@@ -19,40 +19,38 @@ public enum Node {
 }
 
 extension Node: PathIndexable {
-    public var pathIndexableArray: [Node]? {
+    var pathIndexableArray: [Node]? {
         guard case let .array(arr) = self else {
             return nil
         }
         return arr
     }
 
-    public var pathIndexableObject: [String: Node]? {
+    var pathIndexableObject: [String: Node]? {
         guard case let .object(ob) = self else {
             return nil
         }
         return ob
     }
 
-    public init(_ array: [Node]) {
+    init(_ array: [Node]) {
         self = .array(array)
     }
 
-    public init(_ object: [String : Node]) {
+    init(_ object: [String: Node]) {
         self = .object(object)
     }
 }
 
 class PathIndexableTests: XCTestCase {
-    static var allTests: [(String, (PathIndexableTests) -> () throws -> Void)] {
-        return [
-                   ("testInt", testInt),
-                   ("testString", testString),
-                   ("testStringSequenceObject", testStringSequenceObject),
-                   ("testStringSequenceArray", testStringSequenceArray),
-                   ("testIntSequence", testIntSequence),
-                   ("testMixed", testMixed),
-        ]
-    }
+    static var allTests = [
+        ("testInt", testInt),
+        ("testString", testString),
+        ("testStringSequenceObject", testStringSequenceObject),
+        ("testStringSequenceArray", testStringSequenceArray),
+        ("testIntSequence", testIntSequence),
+        ("testMixed", testMixed),
+    ]
 
     func testInt() {
         let array: Node = .array(["one",
@@ -155,5 +153,81 @@ class PathIndexableTests: XCTestCase {
         }
 
         XCTAssert(value == "b")
+    }
+
+    func testOutOfBounds() {
+        var array = Node([.number(1.0), .number(2.0), .number(3.0)])
+        XCTAssertNil(array[3])
+        array[3] = .number(4.0)
+        XCTAssertNil(array[3])
+    }
+
+    func testSetArray() {
+        var array = Node([.number(1.0), .number(2.0), .number(3.0)])
+        XCTAssertEqual(array[1], .number(2.0))
+        array[1] = .number(4.0)
+        XCTAssertEqual(array[1], .number(4.0))
+        array[1] = nil
+        XCTAssertEqual(array[1], .number(3.0))
+    }
+
+    func testMakeEmpty() {
+        let int: Int = 5
+        let node: Node = int.makeEmptyStructure()
+        XCTAssertEqual(node, .array([]))
+    }
+
+    func testAccessNil() {
+        let array = Node([.object(["test": .number(42)]), .number(5)])
+        XCTAssertNil(array["test"])
+
+        let number = Node.number(5)
+        XCTAssertNil(number["test"])
+    }
+
+    func testSetObject() {
+        var object = Node([
+            "one": .number(1.0),
+            "two": .number(2.0),
+            "three": .number(3.0)
+        ])
+        XCTAssertEqual(object["two"], .number(2.0))
+        object["two"] = .number(4.0)
+        XCTAssertEqual(object["two"], .number(4.0))
+        object["two"] = nil
+        XCTAssertEqual(object["two"], nil)
+
+        var array = Node([object, object])
+        array["two"] = .number(5.0)
+    }
+
+    func testPath() {
+        var object = Node([
+            "one": Node([
+                "two": .number(42)
+            ])
+        ])
+        XCTAssertEqual(object[path: "one.two"], .number(42))
+
+        object[path: "one.two"] = .number(5)
+        XCTAssertEqual(object[path: "one.two"], .number(5))
+
+        let comps = "one.two.5.&".keyPathComponents()
+        XCTAssertEqual(comps, ["one", "two", "5", "&"])
+    }
+}
+
+extension Node: Equatable {
+
+}
+
+func ==(lhs: Node, rhs: Node) -> Bool {
+    switch (lhs, rhs) {
+    case (.number(let l), .number(let r)):
+        return l == r
+    case (.array(let l), .array(let r)):
+        return l == r
+    default:
+        return false
     }
 }
