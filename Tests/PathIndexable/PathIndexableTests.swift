@@ -9,7 +9,7 @@
 import XCTest
 @testable import PathIndexable
 
-public enum Node {
+enum Node {
     case null
     case bool(Bool)
     case number(Double)
@@ -19,40 +19,38 @@ public enum Node {
 }
 
 extension Node: PathIndexable {
-    public var pathIndexableArray: [Node]? {
+    var pathIndexableArray: [Node]? {
         guard case let .array(arr) = self else {
             return nil
         }
         return arr
     }
 
-    public var pathIndexableObject: [String: Node]? {
+    var pathIndexableObject: [String: Node]? {
         guard case let .object(ob) = self else {
             return nil
         }
         return ob
     }
 
-    public init(_ array: [Node]) {
+    init(_ array: [Node]) {
         self = .array(array)
     }
 
-    public init(_ object: [String : Node]) {
+    init(_ object: [String: Node]) {
         self = .object(object)
     }
 }
 
 class PathIndexableTests: XCTestCase {
-    static var allTests: [(String, (PathIndexableTests) -> () throws -> Void)] {
-        return [
-                   ("testInt", testInt),
-                   ("testString", testString),
-                   ("testStringSequenceObject", testStringSequenceObject),
-                   ("testStringSequenceArray", testStringSequenceArray),
-                   ("testIntSequence", testIntSequence),
-                   ("testMixed", testMixed),
-        ]
-    }
+    static var allTests = [
+        ("testInt", testInt),
+        ("testString", testString),
+        ("testStringSequenceObject", testStringSequenceObject),
+        ("testStringSequenceArray", testStringSequenceArray),
+        ("testIntSequence", testIntSequence),
+        ("testMixed", testMixed),
+    ]
 
     func testInt() {
         let array: Node = .array(["one",
@@ -155,5 +153,9 @@ class PathIndexableTests: XCTestCase {
         }
 
         XCTAssert(value == "b")
+    }
+
+    func testOutOfBounds() {
+        let array = Node([1, 2, 3])
     }
 }

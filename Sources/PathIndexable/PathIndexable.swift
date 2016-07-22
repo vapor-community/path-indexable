@@ -71,7 +71,13 @@ extension Int: PathIndex {
      - see: PathIndex
      */
     public func access<T: PathIndexable>(in node: T) -> T? {
-        guard let array = node.pathIndexableArray where self < array.count else { return nil }
+        guard
+            let array = node.pathIndexableArray,
+            self < array.count
+        else {
+            return nil
+        }
+
         return array[self]
     }
 
@@ -79,7 +85,13 @@ extension Int: PathIndex {
      - see: PathIndex
      */
     public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
-        guard let array = parent.pathIndexableArray where self < array.count else { return }
+        guard
+            let array = parent.pathIndexableArray,
+            self < array.count
+        else {
+            return
+        }
+        
         var mutable = array
         if let new = input {
             mutable[self] = new

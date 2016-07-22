@@ -10,11 +10,9 @@ import XCTest
 import PathIndexable
 
 class DictionaryKeyPathTests: XCTestCase {
-    static var allTests: [(String, (DictionaryKeyPathTests) -> () throws -> Void)] {
-        return [
-                   ("testPaths", testPaths)
-        ]
-    }
+    static var allTests = [
+        ("testPaths", testPaths)
+    ]
     
     func testPaths() {
         let inner = Node(["two" : .string("Found me!")])

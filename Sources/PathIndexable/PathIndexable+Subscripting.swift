@@ -79,10 +79,6 @@ extension PathIndexable {
 
     public subscript(indexes: String...) -> Self? {
         get {
-            #if DISABLE_NODE_INDEXABLE_WARNINGS
-            #else
-                warnKeypathChangeIfNecessary(indexes: indexes)
-            #endif
             return self[indexes]
         }
         set {
@@ -101,48 +97,6 @@ extension PathIndexable {
         }
     }
 
-    #if DISABLE_NODE_INDEXABLE_WARNINGS
-    #else
-    /**
-     We have changed keypath access in a way that will silently affect older versions.
-     I believe it's important to warn users
-
-     If we find a single parameter which contains `.` notation, then in other versions, this
-     would have been interpreted as a keypath. If we find indexes that match that case, we should
-     provide a warning
-
-     Use
-
-     node["path", "to", "object"]
-
-     Or
-
-     node[path: "path.to.object"]
-
-     - parameter indexes: indexes to check
-     */
-    private func warnKeypathChangeIfNecessary(indexes: [String]) {
-        guard
-            indexes.count == 1,
-            let first = indexes.first
-            where first.characters.contains(".")
-            else { return }
-
-        let components = first.keyPathComponents().joined(separator: ", ")
-        let suggestion = "node[\(components)]"
-        print("***[WARNING]***\n")
-        print("\tKeypath access has changed")
-        print("\tIf '\(first)' should be key path, please use:")
-        print("\n\t\t\(suggestion)")
-        print("\n")
-        print("\tAlternatively, use:")
-        print("\n\t\tnode[path: \(first)]")
-        print("\n")
-        print("\tIf '\(first)' should be interpreted as a key, ignore this warning")
-        print("\tDisable this warning with flag: DISABLE_NODE_INDEXABLE_WARNINGS")
-        print("\n***************")
-    }
-    #endif
 }
 
 extension String {
