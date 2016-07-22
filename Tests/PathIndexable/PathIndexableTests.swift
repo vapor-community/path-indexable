@@ -156,6 +156,78 @@ class PathIndexableTests: XCTestCase {
     }
 
     func testOutOfBounds() {
-        let array = Node([1, 2, 3])
+        var array = Node([.number(1.0), .number(2.0), .number(3.0)])
+        XCTAssertNil(array[3])
+        array[3] = .number(4.0)
+        XCTAssertNil(array[3])
+    }
+
+    func testSetArray() {
+        var array = Node([.number(1.0), .number(2.0), .number(3.0)])
+        XCTAssertEqual(array[1], .number(2.0))
+        array[1] = .number(4.0)
+        XCTAssertEqual(array[1], .number(4.0))
+        array[1] = nil
+        XCTAssertEqual(array[1], .number(3.0))
+    }
+
+    func testMakeEmpty() {
+        let int: Int = 5
+        let node: Node = int.makeEmptyStructure()
+        XCTAssertEqual(node, .array([]))
+    }
+
+    func testAccessNil() {
+        let array = Node([.object(["test": .number(42)]), .number(5)])
+        XCTAssertNil(array["test"])
+
+        let number = Node.number(5)
+        XCTAssertNil(number["test"])
+    }
+
+    func testSetObject() {
+        var object = Node([
+            "one": .number(1.0),
+            "two": .number(2.0),
+            "three": .number(3.0)
+        ])
+        XCTAssertEqual(object["two"], .number(2.0))
+        object["two"] = .number(4.0)
+        XCTAssertEqual(object["two"], .number(4.0))
+        object["two"] = nil
+        XCTAssertEqual(object["two"], nil)
+
+        var array = Node([object, object])
+        array["two"] = .number(5.0)
+    }
+
+    func testPath() {
+        var object = Node([
+            "one": Node([
+                "two": .number(42)
+            ])
+        ])
+        XCTAssertEqual(object[path: "one.two"], .number(42))
+
+        object[path: "one.two"] = .number(5)
+        XCTAssertEqual(object[path: "one.two"], .number(5))
+
+        let comps = "one.two.5.&".keyPathComponents()
+        XCTAssertEqual(comps, ["one", "two", "5", "&"])
+    }
+}
+
+extension Node: Equatable {
+
+}
+
+func ==(lhs: Node, rhs: Node) -> Bool {
+    switch (lhs, rhs) {
+    case (.number(let l), .number(let r)):
+        return l == r
+    case (.array(let l), .array(let r)):
+        return l == r
+    default:
+        return false
     }
 }

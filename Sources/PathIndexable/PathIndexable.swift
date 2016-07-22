@@ -35,41 +35,40 @@ public protocol PathIndexable {
  */
 public protocol PathIndex {
     /**
-     Acess for 'self' within the given node, 
-     ie: inverse ov `= node[self]`
+        Acess for 'self' within the given node,
+        ie: inverse ov `= node[self]`
 
-     - parameter node: the node to access
+        - parameter node: the node to access
 
-     - returns: a value for index of 'self' if exists
-     */
+        - returns: a value for index of 'self' if exists
+    */
     func access<T: PathIndexable>(in node: T) -> T?
 
     /**
-     Set given input to a given node for 'self' if possible.
-     ie: inverse of `node[0] =`
+        Set given input to a given node for 'self' if possible.
+        ie: inverse of `node[0] =`
 
-     - parameter input:  value to set in parent, or `nil` if should remove
-     - parameter parent: node to set input in
-     */
+        - parameter input:  value to set in parent, or `nil` if should remove
+        - parameter parent: node to set input in
+    */
     func set<T: PathIndexable>(_ input: T?, to parent: inout T)
 
     /**
-     Create an empty structure that can be set with the given type.
-     
-     ie: 
-     - a string will create an empty dictionary to add itself as a value
-     - an Int will create an empty array to add itself as a value
+         Create an empty structure that can be set with the given type.
+         
+         ie: 
+         - a string will create an empty dictionary to add itself as a value
+         - an Int will create an empty array to add itself as a value
 
-
-     - returns: an empty structure that can be set by Self
-     */
+         - returns: an empty structure that can be set by Self
+    */
     func makeEmptyStructure<T: PathIndexable>() -> T
 }
 
 extension Int: PathIndex {
     /**
-     - see: PathIndex
-     */
+        - see: PathIndex
+    */
     public func access<T: PathIndexable>(in node: T) -> T? {
         guard
             let array = node.pathIndexableArray,
@@ -82,8 +81,8 @@ extension Int: PathIndex {
     }
 
     /**
-     - see: PathIndex
-     */
+        - see: PathIndex
+    */
     public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
         guard
             let array = parent.pathIndexableArray,
@@ -108,8 +107,8 @@ extension Int: PathIndex {
 
 extension String: PathIndex {
     /**
-     - see: PathIndex
-     */
+        - see: PathIndex
+    */
     public func access<T: PathIndexable>(in node: T) -> T? {
         if let object = node.pathIndexableObject?[self] {
             return object
@@ -126,8 +125,8 @@ extension String: PathIndex {
     }
 
     /**
-     - see: PathIndex
-     */
+        - see: PathIndex
+    */
     public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
         if let object = parent.pathIndexableObject {
             var mutable = object
