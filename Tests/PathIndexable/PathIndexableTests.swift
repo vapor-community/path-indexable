@@ -215,6 +215,28 @@ class PathIndexableTests: XCTestCase {
         let comps = "one.two.5.&".keyPathComponents()
         XCTAssertEqual(comps, ["one", "two", "5", "&"])
     }
+
+    func testStringPathIndex() {
+        let path = ["hello", "3"]
+        let node = Node(
+            [
+                "hello": .array([
+                    .string("a"),
+                    .string("b"),
+                    .string("c"),
+                    .string("d")
+                ])
+            ]
+        )
+
+
+        if let n = node[path], case let .string(result) = n {
+            print(result)
+            XCTAssert(result == "d")
+        } else {
+            XCTFail("Expected result")
+        }
+    }
 }
 
 extension Node: Equatable {

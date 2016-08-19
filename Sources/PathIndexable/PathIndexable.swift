@@ -113,15 +113,20 @@ extension String: PathIndex {
         if let object = node.pathIndexableObject?[self] {
             return object
         } else if let array = node.pathIndexableArray {
+            // Index takes precedence
+            if let idx = Int(self), idx < array.count {
+                return array[idx]
+            }
+
             let value = array.flatMap(self.access)
             if value.count == array.count {
                 return node.dynamicType.init(value)
-            } else {
-                return nil
             }
-        } else {
+
             return nil
         }
+
+        return nil
     }
 
     /**
