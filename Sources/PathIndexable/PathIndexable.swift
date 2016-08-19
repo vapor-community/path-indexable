@@ -97,7 +97,7 @@ extension Int: PathIndex {
         } else {
             mutable.remove(at: self)
         }
-        parent = parent.dynamicType.init(mutable)
+        parent = type(of: parent).init(mutable)
     }
 
     public func makeEmptyStructure<T: PathIndexable>() -> T {
@@ -120,7 +120,7 @@ extension String: PathIndex {
 
             let value = array.flatMap(self.access)
             if value.count == array.count {
-                return node.dynamicType.init(value)
+                return type(of: node).init(value)
             }
 
             return nil
@@ -136,14 +136,14 @@ extension String: PathIndex {
         if let object = parent.pathIndexableObject {
             var mutable = object
             mutable[self] = input
-            parent = parent.dynamicType.init(mutable)
+            parent = type(of: parent).init(mutable)
         } else if let array = parent.pathIndexableArray {
             let mapped: [T] = array.map { val in
                 var mutable = val
                 self.set(input, to: &mutable)
                 return mutable
             }
-            parent = parent.dynamicType.init(mapped)
+            parent = type(of: parent).init(mapped)
         }
     }
 
