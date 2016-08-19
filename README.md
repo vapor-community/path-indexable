@@ -111,6 +111,7 @@ let arrayOfNames = json["name"] // ["joe", "jane"]
 
 |Polymorphic|Xcode|Swift|
 |:-:|:-:|:-:|
+|0.4.x|8.0 Beta **6**|DEVELOPMENT-SNAPSHOT-2016-08-18-a|
 |0.3.x|8.0 Beta **3**|DEVELOPMENT-SNAPSHOT-2016-07-20-qutheory|
 |0.2.x|7.3.x|DEVELOPMENT-SNAPSHOT-2016-05-03-a|
 |0.1.x|7.3.x|DEVELOPMENT-SNAPSHOT-2016-05-03-a|
@@ -126,3 +127,7 @@ We pride ourselves on providing a diverse and welcoming community. Join your fel
 ## 🔧 Compatibility
 
 Node has been tested on OS X 10.11, Ubuntu 14.04, and Ubuntu 15.10.
+
+## 👥 Authors
+
+[Logan Wright](https://twitter.com/logmaestro)
