@@ -1,8 +1,13 @@
-<h1 align="center">PathIndexable</h1>
+# PathIndexable
+
+![Swift](http://img.shields.io/badge/swift-v3.0--dev.08.18-brightgreen.svg)
+[![Build Status](https://travis-ci.org/vapor/path-indexable.svg?branch=master)](https://travis-ci.org/vapor/path-indexable)
+[![CircleCI](https://circleci.com/gh/vapor/path-indexable.svg?style=shield)](https://circleci.com/gh/vapor/path-indexable)
+[![Code Coverage](https://codecov.io/gh/vapor/path-indexable/branch/master/graph/badge.svg)](https://codecov.io/gh/vapor/path-indexable)
+[![Codebeat](https://codebeat.co/badges/a793ad97-47e3-40d9-82cf-2aafc516ef4e)](https://codebeat.co/projects/github-com-vapor-path-indexable)
+[![Slack Status](http://vapor.team/badge.svg)](http://vapor.team)
 
 The purpose of this package is to allow complex key path logic to be applied to multiple types of data structures.
-
-### PathIndexable
 
 This type is used to define a structure that can inherit complex subscripting.
 
@@ -106,6 +111,7 @@ let arrayOfNames = json["name"] // ["joe", "jane"]
 
 |Polymorphic|Xcode|Swift|
 |:-:|:-:|:-:|
+|0.4.x|8.0 Beta **6**|DEVELOPMENT-SNAPSHOT-2016-08-18-a|
 |0.3.x|8.0 Beta **3**|DEVELOPMENT-SNAPSHOT-2016-07-20-qutheory|
 |0.2.x|7.3.x|DEVELOPMENT-SNAPSHOT-2016-05-03-a|
 |0.1.x|7.3.x|DEVELOPMENT-SNAPSHOT-2016-05-03-a|
@@ -121,3 +127,7 @@ We pride ourselves on providing a diverse and welcoming community. Join your fel
 ## 🔧 Compatibility
 
 Node has been tested on OS X 10.11, Ubuntu 14.04, and Ubuntu 15.10.
+
+## 👥 Authors
+
+[Logan Wright](https://twitter.com/logmaestro)

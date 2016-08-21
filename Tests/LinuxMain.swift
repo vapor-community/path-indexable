@@ -2,7 +2,7 @@
 #if os(Linux)
 
 import XCTest
-@testable import PathIndexableTestSuite
+@testable import PathIndexableTests
 
 XCTMain([
     testCase(DictionaryKeyPathTests.allTests),
