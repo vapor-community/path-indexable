@@ -179,7 +179,15 @@ class PathIndexableTests: XCTestCase {
 
     func testAccessNil() {
         let array = Node([.object(["test": .number(42)]), .number(5)])
-        XCTAssertNil(array["test"])
+        XCTAssertNil(array["foo"])
+        
+        let keyValResult = array["test"]
+        if case let .array(array) = keyValResult {
+            XCTAssertEqual(array.count, 1)
+            XCTAssertEqual(array.first, .number(42))
+        } else {
+            XCTFail("Expected array result from array key val")
+        }
 
         let number = Node.number(5)
         XCTAssertNil(number["test"])
