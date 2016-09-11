@@ -50,6 +50,7 @@ class PathIndexableTests: XCTestCase {
         ("testStringSequenceArray", testStringSequenceArray),
         ("testIntSequence", testIntSequence),
         ("testMixed", testMixed),
+        ("testAccessNil", testAccessNil),
     ]
 
     func testInt() {
@@ -181,8 +182,7 @@ class PathIndexableTests: XCTestCase {
         let array = Node([.object(["test": .number(42)]), .number(5)])
         XCTAssertNil(array["foo"])
         
-        let keyValResult = array["test"]
-        if case let .array(array) = keyValResult {
+        if let keyValResult = array["test"], case let .array(array) = keyValResult {
             XCTAssertEqual(array.count, 1)
             XCTAssertEqual(array.first, .number(42))
         } else {
