@@ -119,7 +119,7 @@ extension String: PathIndex {
             }
 
             let value = array.flatMap(self.access)
-            if value.count == array.count {
+            if value.count > 0 {
                 return type(of: node).init(value)
             }
 
