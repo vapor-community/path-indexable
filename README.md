@@ -14,12 +14,12 @@ This type is used to define a structure that can inherit complex subscripting.
 
 ## 📖 Documentation
 
-Visit the Vapor web framework's [documentation](https://docs.vapor.codes) for instructions on how to use this package
+Visit the Vapor web framework's [documentation](http://docs.vapor.codes) for instructions on how to use this package.
 
 ## 💧 Community
 
-We pride ourselves on providing a diverse and welcoming community. Join your fellow Vapor developers in [our slack](http://vapor.team) and take part in the conversation.
+Join the welcoming community of fellow Vapor developers in [slack](http://vapor.team).
 
 ## 🔧 Compatibility
 
-Node has been tested on OS X 10.11, Ubuntu 14.04, and Ubuntu 15.10.
+Core has been tested on macOS and Ubuntu.
