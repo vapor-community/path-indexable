@@ -35,7 +35,7 @@ public protocol PathIndexable {
  */
 public protocol PathIndex {
     /**
-        Acess for 'self' within the given node,
+        Access for 'self' within the given node,
         ie: inverse ov `= node[self]`
 
         - parameter node: the node to access
