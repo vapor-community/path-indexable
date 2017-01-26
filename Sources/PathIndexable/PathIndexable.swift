@@ -63,6 +63,11 @@ public protocol PathIndex {
          - returns: an empty structure that can be set by Self
     */
     func makeEmptyStructure<T: PathIndexable>() -> T
+    
+    /**
+        - returns: a string representation of the PathIndex
+     */
+    var string: String { get }
 }
 
 extension Int: PathIndex {
@@ -102,6 +107,10 @@ extension Int: PathIndex {
 
     public func makeEmptyStructure<T: PathIndexable>() -> T {
         return T([])
+    }
+    
+    public var string: String {
+        return "\(self)"
     }
 }
 
@@ -150,5 +159,9 @@ extension String: PathIndex {
 
     public func makeEmptyStructure<T: PathIndexable>() -> T {
         return T([:])
+    }
+    
+    public var string: String {
+        return self
     }
 }
