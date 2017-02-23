@@ -174,7 +174,7 @@ class PathIndexableTests: XCTestCase {
 
     func testMakeEmpty() {
         let int: Int = 5
-        let node: Node = int.makeEmptyStructure()
+        let node: Node = int.makeEmptyStructureForIndexing()
         XCTAssertEqual(node, .array([]))
     }
 
@@ -215,10 +215,10 @@ class PathIndexableTests: XCTestCase {
                 "two": .number(42)
             ])
         ])
-        XCTAssertEqual(object[path: "one.two"], .number(42))
+        XCTAssertEqual(object["one.two"], .number(42))
 
-        object[path: "one.two"] = .number(5)
-        XCTAssertEqual(object[path: "one.two"], .number(5))
+        object["one.two"] = .number(5)
+        XCTAssertEqual(object["one.two"], .number(5))
 
         let comps = "one.two.5.&".keyPathComponents()
         XCTAssertEqual(comps, ["one", "two", "5", "&"])
@@ -237,8 +237,27 @@ class PathIndexableTests: XCTestCase {
             ]
         )
 
-
         if let n = node[path], case let .string(result) = n {
+            print(result)
+            XCTAssert(result == "d")
+        } else {
+            XCTFail("Expected result")
+        }
+    }
+
+    func testDotKey() {
+        let node = Node(
+            [
+                "foo.bar": .array([
+                    .string("a"),
+                    .string("b"),
+                    .string("c"),
+                    .string("d")
+                    ])
+            ]
+        )
+
+        if let n = node[DotKey("foo.bar"), 3], case let .string(result) = n {
             print(result)
             XCTAssert(result == "d")
         } else {

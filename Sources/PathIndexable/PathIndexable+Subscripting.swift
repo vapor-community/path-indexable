@@ -1,108 +1,73 @@
-//
-//  Genome
-//
-//  Created by Logan Wright
-//  Copyright © 2016 lowriDevs. All rights reserved.
-//
-//  MIT
-//
-
-// MARK: Subscripts
-
+///  Indexable
+///  ["a": [["foo":"bar"]]]
+///  Indexer list
+///  ["a", 0, "foo"]
+///
+///  "a"
+///  [["foo":"bar"]]
+///  [0, "foo"]
+///
+///  0
+///  ["foo":"bar"]
+///  ["foo"]
+///
+///  "foo"
+///  "bar"
+///  []
+///
+///  ret bar
 extension PathIndexable {
-    public subscript(indexes: PathIndex...) -> Self? {
+    /// Access via comma separated list of indexers, for example
+    /// ["key", 0, "path", "here"
+    public subscript(indexers: PathIndexer...) -> Self? {
         get {
-            return self[indexes]
+            return self[indexers]
         }
         set {
-            self[indexes] = newValue
+            self[indexers] = newValue
         }
     }
 
-    public subscript(indexes: [PathIndex]) -> Self? {
+    /// Sometimes we prefer (or require) arrays of indexers
+    /// those are accepted here
+    public subscript(indexers: [PathIndexer]) -> Self? {
         get {
-            let first: Optional<Self> = self
-            return indexes.reduce(first) { next, index in
-                guard let next = next else { return nil }
-                return index.access(in: next)
+            let indexers = indexers.unwrap()
+
+            /// if there's a next item, then the corresponding index
+            /// for that item needs to access it.
+            ///
+            /// once nil is found, keep returning nil, indexers don't matter at that point
+            return indexers.reduce(self) { nextIndexable, nextIndexer in
+                return nextIndexable.flatMap(nextIndexer.get)
             }
         }
         set {
-            var keys = indexes
-            guard let first = keys.first else { return }
-            keys.remove(at: 0)
+            let indexers = indexers.unwrap()
 
-            if keys.isEmpty {
-                first.set(newValue, to: &self)
+            guard let currentIndexer = indexers.first else { return }
+            var indexersRemaining = indexers
+            indexersRemaining.removeFirst()
+
+            if indexersRemaining.isEmpty {
+                currentIndexer.set(newValue, to: &self)
             } else {
-                var next = self[first] ?? first.makeEmptyStructure() as Self
-                next[keys] = newValue
-                self[first] = next
+                var next = self[currentIndexer] ?? currentIndexer.makeEmptyStructureForIndexing() as Self
+                next[indexersRemaining] = newValue
+                self[currentIndexer] = next
             }
         }
     }
 }
 
-extension PathIndexable {
-    public subscript(indexes: Int...) -> Self? {
-        get {
-            return self[indexes]
-        }
-        set {
-            self[indexes] = newValue
-        }
+extension Sequence where Iterator.Element == PathIndexer {
+    /// This is how we allow strings to unwrap themselves into larger keys
+    /// if you need to preserve `.` in your keys, use the `DotKey` type
+    internal func unwrap() -> [PathIndexer] {
+        return flatMap { indexer in indexer.unwrapComponents() }
     }
 
-    public subscript(indexes: [Int]) -> Self? {
-        get {
-            let indexable = indexes.map { $0 as PathIndex }
-            return self[indexable]
-        }
-        set {
-            let indexable = indexes.map { $0 as PathIndex }
-            self[indexable] = newValue
-        }
-    }
-}
-
-extension PathIndexable {
-    public subscript(path path: String) -> Self? {
-        get {
-            let comps = path.characters.split(separator: ".").map(String.init)
-            return self[comps]
-        }
-        set {
-            let comps = path.keyPathComponents()
-            self[comps] = newValue
-        }
-    }
-
-    public subscript(indexes: String...) -> Self? {
-        get {
-            return self[indexes]
-        }
-        set {
-            self[indexes] = newValue
-        }
-    }
-
-    public subscript(indexes: [String]) -> Self? {
-        get {
-            let indexable = indexes.map { $0 as PathIndex }
-            return self[indexable]
-        }
-        set {
-            let indexable = indexes.map { $0 as PathIndex }
-            self[indexable] = newValue
-        }
-    }
-
-}
-
-extension String {
-    internal func keyPathComponents() -> [String] {
-        return characters
-            .split(separator: ".")
-            .map(String.init)
+    public func path() -> String {
+        return map { $0.description } .joined(separator: ", ")
     }
 }
