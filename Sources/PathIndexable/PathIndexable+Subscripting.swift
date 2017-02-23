@@ -1,67 +1,78 @@
-//
-//  Genome
-//
-//  Created by Logan Wright
-//  Copyright © 2016 lowriDevs. All rights reserved.
-//
-//  MIT
-//
-
-// MARK: Subscripts
-
+///  Indexable
+///  ["a": [["foo":"bar"]]]
+///  Indexer list
+///  ["a", 0, "foo"]
+///
+///  "a"
+///  [["foo":"bar"]]
+///  [0, "foo"]
+///
+///  0
+///  ["foo":"bar"]
+///  ["foo"]
+///
+///  "foo"
+///  "bar"
+///  []
+///
+///  ret bar
 extension PathIndexable {
-    public subscript(path indexes: PathIndex...) -> Self? {
+    /// Access via comma separated list of indexers, for example
+    /// ["key", 0, "path", "here"
+    public subscript(path indexers: PathIndexer...) -> Self? {
         get {
-            return self[path: indexes]
+            return self[path: indexers]
         }
         set {
-            self[path: indexes] = newValue
+            self[path: indexers] = newValue
         }
     }
 
-    public subscript(path indexes: [PathIndex]) -> Self? {
+    /// Sometimes we prefer (or require) arrays of indexers
+    /// those are accepted here
+    public subscript(path indexers: [PathIndexer]) -> Self? {
         get {
-            let first: Optional<Self> = self
-            return indexes.reduce(first) { next, index in
-                /// if there's a next item, then the corresponding index
-                /// for that item needs to access it. 
-                ///
-                /// once nil is found, keep returning nil, indexes don't matter
-                ///
-                ///
-                ///
-                return next.flatMap(index.get)
+            /// if there's a next item, then the corresponding index
+            /// for that item needs to access it.
+            ///
+            /// once nil is found, keep returning nil, indexers don't matter at that point
+            return indexers.reduce(self) { nextIndexable, nextIndexer in
+                return nextIndexable.flatMap(nextIndexer.get)
             }
         }
         set {
-            var keys = indexes
-            guard let first = keys.first else { return }
-            keys.remove(at: 0)
+            guard let currentIndexer = indexers.first else { return }
+            var indexersRemaining = indexers
+            indexersRemaining.removeFirst()
 
-            if keys.isEmpty {
-                first.set(newValue, to: &self)
+            if indexersRemaining.isEmpty {
+                currentIndexer.set(newValue, to: &self)
             } else {
-                var next = self[path: first] ?? first.makeEmptyStructure() as Self
-                next[path: keys] = newValue
-                self[path: first] = next
+                var next = self[path: currentIndexer] ?? currentIndexer.makeEmptyStructureForIndexing() as Self
+                next[path: indexersRemaining] = newValue
+                self[path: currentIndexer] = next
             }
         }
     }
 }
 
 extension PathIndexable {
-    public subscript(_ path: String) -> Self? {
+    /// access an item via a keypath, for example
+    /// 
+    /// "key.path.0.foo"
+    public subscript(keyPath: String) -> Self? {
         get {
-            let comps = path.characters.split(separator: ".").map(String.init)
+            let comps = keyPath.keyPathComponents()
             return self[path: comps]
         }
         set {
-            let comps = path.keyPathComponents()
+            let comps = keyPath.keyPathComponents()
             self[path: comps] = newValue
         }
     }
 
-    public subscript(_ index: Int) -> Self? {
+    /// Access an item via an index
+    public subscript(index: Int) -> Self? {
         get {
             return self[path: index]
         }

@@ -33,7 +33,7 @@ public protocol PathIndexable {
  Int and String are supported natively, additional Indexable types
  should only be added after very careful consideration.
  */
-public protocol PathIndex {
+public protocol PathIndexer {
     /**
         Access for 'self' within the given node,
         ie: inverse ov `= node[self]`
@@ -62,21 +62,16 @@ public protocol PathIndex {
 
          - returns: an empty structure that can be set by Self
     */
-    func makeEmptyStructure<T: PathIndexable>() -> T
+    func makeEmptyStructureForIndexing<T: PathIndexable>() -> T
 }
 
-extension Int: PathIndex {
+extension Int: PathIndexer {
     /**
         - see: PathIndex
     */
     public func get<T: PathIndexable>(from node: T) -> T? {
-        guard
-            let array = node.pathIndexableArray,
-            self < array.count
-        else {
-            return nil
-        }
-
+        guard let array = node.pathIndexableArray else { return nil }
+        guard self < array.count else { return nil }
         return array[self]
     }
 
@@ -84,12 +79,8 @@ extension Int: PathIndex {
         - see: PathIndex
     */
     public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
-        guard
-            let array = parent.pathIndexableArray,
-            self < array.count
-        else {
-            return
-        }
+        guard let array = parent.pathIndexableArray else { return }
+        guard self < array.count else { return }
         
         var mutable = array
         if let new = input {
@@ -100,12 +91,12 @@ extension Int: PathIndex {
         parent = type(of: parent).init(mutable)
     }
 
-    public func makeEmptyStructure<T: PathIndexable>() -> T {
+    public func makeEmptyStructureForIndexing<T: PathIndexable>() -> T {
         return T([])
     }
 }
 
-extension String: PathIndex {
+extension String: PathIndexer {
     /**
         - see: PathIndex
     */
@@ -119,11 +110,8 @@ extension String: PathIndex {
             }
 
             let value = array.flatMap(self.get)
-            if value.count > 0 {
-                return type(of: node).init(value)
-            }
-
-            return nil
+            guard !value.isEmpty else { return nil }
+            return type(of: node).init(value)
         }
 
         return nil
@@ -148,7 +136,7 @@ extension String: PathIndex {
     }
 
 
-    public func makeEmptyStructure<T: PathIndexable>() -> T {
+    public func makeEmptyStructureForIndexing<T: PathIndexable>() -> T {
         return T([:])
     }
 }

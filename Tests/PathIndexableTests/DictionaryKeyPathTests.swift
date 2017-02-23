@@ -20,7 +20,7 @@ class DictionaryKeyPathTests: XCTestCase {
             "one" : inner
         ])
 
-        guard let node = test["one", "two"] else {
+        guard let node = test[path: "one", "two"] else {
             XCTFail()
             return
         }
@@ -31,8 +31,8 @@ class DictionaryKeyPathTests: XCTestCase {
         }
         XCTAssert(str == "Found me!")
 
-        test["path", "to", "new", "value"] = .string("Hello!")
-        guard let setVal = test["path", "to", "new", "value"] else {
+        test[path: "path", "to", "new", "value"] = .string("Hello!")
+        guard let setVal = test[path: "path", "to", "new", "value"] else {
             XCTFail()
             return
         }

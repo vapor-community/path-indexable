@@ -86,7 +86,7 @@ class PathIndexableTests: XCTestCase {
     func testStringSequenceObject() {
         let sub = Node(["path" : .string("found me!")])
         let ob = Node(["key" : sub])
-        guard let node = ob["key", "path"] else {
+        guard let node = ob[path: "key", "path"] else {
             XCTFail()
             return
         }
@@ -128,7 +128,7 @@ class PathIndexableTests: XCTestCase {
                           .string("found me!")])
         let outer = Node([inner])
 
-        guard let node = outer[0, 1] else {
+        guard let node = outer[path: 0, 1] else {
             XCTFail()
             return
         }
@@ -144,7 +144,7 @@ class PathIndexableTests: XCTestCase {
         let array = Node([.string("a"), .string("b"), .string("c")])
         let mixed = Node(["one" : array])
 
-        guard let node = mixed["one", 1] else {
+        guard let node = mixed[path: "one", 1] else {
             XCTFail()
             return
         }
@@ -174,7 +174,7 @@ class PathIndexableTests: XCTestCase {
 
     func testMakeEmpty() {
         let int: Int = 5
-        let node: Node = int.makeEmptyStructure()
+        let node: Node = int.makeEmptyStructureForIndexing()
         XCTAssertEqual(node, .array([]))
     }
 
@@ -215,7 +215,7 @@ class PathIndexableTests: XCTestCase {
                 "two": .number(42)
             ])
         ])
-        XCTAssertEqual(object[path: "one.two"], .number(42))
+        XCTAssertEqual(object["one.two"], .number(42))
 
         object[path: "one.two"] = .number(5)
         XCTAssertEqual(object[path: "one.two"], .number(5))
@@ -237,8 +237,7 @@ class PathIndexableTests: XCTestCase {
             ]
         )
 
-
-        if let n = node[path], case let .string(result) = n {
+        if let n = node[path: path], case let .string(result) = n {
             print(result)
             XCTAssert(result == "d")
         } else {
