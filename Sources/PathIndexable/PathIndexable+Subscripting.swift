@@ -33,7 +33,7 @@ extension PathIndexable {
     public subscript(indexers: [PathIndexer]) -> Self? {
         get {
             let indexers = indexers.unwrap()
-            
+
             /// if there's a next item, then the corresponding index
             /// for that item needs to access it.
             ///
@@ -67,7 +67,7 @@ extension Array where Element == PathIndexer {
         return flatMap { indexer in indexer.unwrapComponents() }
     }
 
-    public var description: String {
+    public func path() -> String {
         return map { $0.description } .joined(separator: ", ")
     }
 }
