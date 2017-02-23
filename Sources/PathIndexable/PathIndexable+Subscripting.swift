@@ -66,4 +66,8 @@ extension Array where Element == PathIndexer {
     internal func unwrap() -> [PathIndexer] {
         return flatMap { indexer in indexer.unwrapComponents() }
     }
+
+    public var description: String {
+        return map { $0.description } .joined(separator: ", ")
+    }
 }

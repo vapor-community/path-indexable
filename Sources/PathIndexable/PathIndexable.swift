@@ -33,7 +33,7 @@ public protocol PathIndexable {
  Int and String are supported natively, additional Indexable types
  should only be added after very careful consideration.
  */
-public protocol PathIndexer {
+public protocol PathIndexer: CustomStringConvertible {
     /**
         Access for 'self' within the given node,
         ie: inverse ov `= node[self]`
@@ -187,5 +187,11 @@ public struct DotKey: PathIndexer {
 
     public func makeEmptyStructureForIndexing<T: PathIndexable>() -> T {
         return key.makeEmptyStructureForIndexing()
+    }
+}
+
+extension DotKey {
+    public var description: String {
+        return key
     }
 }
