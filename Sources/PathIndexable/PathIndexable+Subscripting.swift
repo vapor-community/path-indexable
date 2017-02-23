@@ -60,7 +60,7 @@ extension PathIndexable {
     }
 }
 
-extension Array where Element == PathIndexer {
+extension Sequence where Iterator.Element == PathIndexer {
     /// This is how we allow strings to unwrap themselves into larger keys
     /// if you need to preserve `.` in your keys, use the `DotKey` type
     internal func unwrap() -> [PathIndexer] {
