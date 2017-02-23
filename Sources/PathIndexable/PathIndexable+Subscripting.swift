@@ -10,21 +10,27 @@
 // MARK: Subscripts
 
 extension PathIndexable {
-    public subscript(indexes: PathIndex...) -> Self? {
+    public subscript(path indexes: PathIndex...) -> Self? {
         get {
-            return self[indexes]
+            return self[path: indexes]
         }
         set {
-            self[indexes] = newValue
+            self[path: indexes] = newValue
         }
     }
 
-    public subscript(indexes: [PathIndex]) -> Self? {
+    public subscript(path indexes: [PathIndex]) -> Self? {
         get {
             let first: Optional<Self> = self
             return indexes.reduce(first) { next, index in
-                guard let next = next else { return nil }
-                return index.access(in: next)
+                /// if there's a next item, then the corresponding index
+                /// for that item needs to access it. 
+                ///
+                /// once nil is found, keep returning nil, indexes don't matter
+                ///
+                ///
+                ///
+                return next.flatMap(index.get)
             }
         }
         set {
@@ -35,68 +41,34 @@ extension PathIndexable {
             if keys.isEmpty {
                 first.set(newValue, to: &self)
             } else {
-                var next = self[first] ?? first.makeEmptyStructure() as Self
-                next[keys] = newValue
-                self[first] = next
+                var next = self[path: first] ?? first.makeEmptyStructure() as Self
+                next[path: keys] = newValue
+                self[path: first] = next
             }
         }
     }
 }
 
 extension PathIndexable {
-    public subscript(indexes: Int...) -> Self? {
-        get {
-            return self[indexes]
-        }
-        set {
-            self[indexes] = newValue
-        }
-    }
-
-    public subscript(indexes: [Int]) -> Self? {
-        get {
-            let indexable = indexes.map { $0 as PathIndex }
-            return self[indexable]
-        }
-        set {
-            let indexable = indexes.map { $0 as PathIndex }
-            self[indexable] = newValue
-        }
-    }
-}
-
-extension PathIndexable {
-    public subscript(path path: String) -> Self? {
+    public subscript(_ path: String) -> Self? {
         get {
             let comps = path.characters.split(separator: ".").map(String.init)
-            return self[comps]
+            return self[path: comps]
         }
         set {
             let comps = path.keyPathComponents()
-            self[comps] = newValue
+            self[path: comps] = newValue
         }
     }
 
-    public subscript(indexes: String...) -> Self? {
+    public subscript(_ index: Int) -> Self? {
         get {
-            return self[indexes]
+            return self[path: index]
         }
         set {
-            self[indexes] = newValue
+            self[path: index] = newValue
         }
     }
-
-    public subscript(indexes: [String]) -> Self? {
-        get {
-            let indexable = indexes.map { $0 as PathIndex }
-            return self[indexable]
-        }
-        set {
-            let indexable = indexes.map { $0 as PathIndex }
-            self[indexable] = newValue
-        }
-    }
-
 }
 
 extension String {

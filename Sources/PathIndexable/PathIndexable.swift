@@ -42,7 +42,7 @@ public protocol PathIndex {
 
         - returns: a value for index of 'self' if exists
     */
-    func access<T: PathIndexable>(in node: T) -> T?
+    func get<T: PathIndexable>(from node: T) -> T?
 
     /**
         Set given input to a given node for 'self' if possible.
@@ -69,7 +69,7 @@ extension Int: PathIndex {
     /**
         - see: PathIndex
     */
-    public func access<T: PathIndexable>(in node: T) -> T? {
+    public func get<T: PathIndexable>(from node: T) -> T? {
         guard
             let array = node.pathIndexableArray,
             self < array.count
@@ -109,7 +109,7 @@ extension String: PathIndex {
     /**
         - see: PathIndex
     */
-    public func access<T: PathIndexable>(in node: T) -> T? {
+    public func get<T: PathIndexable>(from node: T) -> T? {
         if let object = node.pathIndexableObject?[self] {
             return object
         } else if let array = node.pathIndexableArray {
@@ -118,7 +118,7 @@ extension String: PathIndex {
                 return array[idx]
             }
 
-            let value = array.flatMap(self.access)
+            let value = array.flatMap(self.get)
             if value.count > 0 {
                 return type(of: node).init(value)
             }
