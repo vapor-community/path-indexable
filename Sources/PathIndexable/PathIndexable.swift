@@ -42,7 +42,7 @@ public protocol PathIndexer {
 
         - returns: a value for index of 'self' if exists
     */
-    func get<T: PathIndexable>(from node: T) -> T?
+    func get<T: PathIndexable>(from indexable: T) -> T?
 
     /**
         Set given input to a given node for 'self' if possible.
@@ -63,14 +63,21 @@ public protocol PathIndexer {
          - returns: an empty structure that can be set by Self
     */
     func makeEmptyStructureForIndexing<T: PathIndexable>() -> T
+
+    /// Used to allow turning one component into many when desirable
+    func unwrapComponents() -> [PathIndexer]
+}
+
+extension PathIndexer {
+    public func unwrapComponents() -> [PathIndexer] { return [self] }
 }
 
 extension Int: PathIndexer {
     /**
         - see: PathIndex
     */
-    public func get<T: PathIndexable>(from node: T) -> T? {
-        guard let array = node.pathIndexableArray else { return nil }
+    public func get<T: PathIndexable>(from indexable: T) -> T? {
+        guard let array = indexable.pathIndexableArray else { return nil }
         guard self < array.count else { return nil }
         return array[self]
     }
@@ -100,10 +107,10 @@ extension String: PathIndexer {
     /**
         - see: PathIndex
     */
-    public func get<T: PathIndexable>(from node: T) -> T? {
-        if let object = node.pathIndexableObject?[self] {
+    public func get<T: PathIndexable>(from indexable: T) -> T? {
+        if let object = indexable.pathIndexableObject?[self] {
             return object
-        } else if let array = node.pathIndexableArray {
+        } else if let array = indexable.pathIndexableArray {
             // Index takes precedence
             if let idx = Int(self), idx < array.count {
                 return array[idx]
@@ -111,7 +118,7 @@ extension String: PathIndexer {
 
             let value = array.flatMap(self.get)
             guard !value.isEmpty else { return nil }
-            return type(of: node).init(value)
+            return type(of: indexable).init(value)
         }
 
         return nil
@@ -138,5 +145,47 @@ extension String: PathIndexer {
 
     public func makeEmptyStructureForIndexing<T: PathIndexable>() -> T {
         return T([:])
+    }
+
+    public func unwrapComponents() -> [PathIndexer] {
+        return characters
+            .split(separator: ".")
+            .map(String.init)
+    }
+}
+
+extension String {
+    internal func keyPathComponents() -> [String] {
+        return characters
+            .split(separator: ".")
+            .map(String.init)
+    }
+}
+
+/// Everything in indexable will explode keypaths,
+/// for example, "foo.bar" will become "foo", "bar"
+/// should you have . nested in your JSON keys, use this class
+///
+/// ["foo.bar": 2]
+///
+/// would be accessed
+/// data[DotKey("foo.bar")]
+/// this will preserve the `.`
+public struct DotKey: PathIndexer {
+    public let key: String
+    public init(_ key: String) {
+        self.key = key
+    }
+
+    public func get<T: PathIndexable>(from indexable: T) -> T? {
+        return key.get(from: indexable)
+    }
+
+    public func set<T: PathIndexable>(_ input: T?, to parent: inout T) {
+        key.set(input, to: &parent)
+    }
+
+    public func makeEmptyStructureForIndexing<T: PathIndexable>() -> T {
+        return key.makeEmptyStructureForIndexing()
     }
 }

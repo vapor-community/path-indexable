@@ -19,19 +19,21 @@
 extension PathIndexable {
     /// Access via comma separated list of indexers, for example
     /// ["key", 0, "path", "here"
-    public subscript(path indexers: PathIndexer...) -> Self? {
+    public subscript(indexers: PathIndexer...) -> Self? {
         get {
-            return self[path: indexers]
+            return self[indexers]
         }
         set {
-            self[path: indexers] = newValue
+            self[indexers] = newValue
         }
     }
 
     /// Sometimes we prefer (or require) arrays of indexers
     /// those are accepted here
-    public subscript(path indexers: [PathIndexer]) -> Self? {
+    public subscript(indexers: [PathIndexer]) -> Self? {
         get {
+            let indexers = indexers.unwrap()
+            
             /// if there's a next item, then the corresponding index
             /// for that item needs to access it.
             ///
@@ -41,6 +43,8 @@ extension PathIndexable {
             }
         }
         set {
+            let indexers = indexers.unwrap()
+
             guard let currentIndexer = indexers.first else { return }
             var indexersRemaining = indexers
             indexersRemaining.removeFirst()
@@ -48,44 +52,18 @@ extension PathIndexable {
             if indexersRemaining.isEmpty {
                 currentIndexer.set(newValue, to: &self)
             } else {
-                var next = self[path: currentIndexer] ?? currentIndexer.makeEmptyStructureForIndexing() as Self
-                next[path: indexersRemaining] = newValue
-                self[path: currentIndexer] = next
+                var next = self[currentIndexer] ?? currentIndexer.makeEmptyStructureForIndexing() as Self
+                next[indexersRemaining] = newValue
+                self[currentIndexer] = next
             }
         }
     }
 }
 
-extension PathIndexable {
-    /// access an item via a keypath, for example
-    /// 
-    /// "key.path.0.foo"
-    public subscript(keyPath: String) -> Self? {
-        get {
-            let comps = keyPath.keyPathComponents()
-            return self[path: comps]
-        }
-        set {
-            let comps = keyPath.keyPathComponents()
-            self[path: comps] = newValue
-        }
-    }
-
-    /// Access an item via an index
-    public subscript(index: Int) -> Self? {
-        get {
-            return self[path: index]
-        }
-        set {
-            self[path: index] = newValue
-        }
-    }
-}
-
-extension String {
-    internal func keyPathComponents() -> [String] {
-        return characters
-            .split(separator: ".")
-            .map(String.init)
+extension Array where Element == PathIndexer {
+    /// This is how we allow strings to unwrap themselves into larger keys
+    /// if you need to preserve `.` in your keys, use the `DotKey` type
+    internal func unwrap() -> [PathIndexer] {
+        return flatMap { indexer in indexer.unwrapComponents() }
     }
 }
